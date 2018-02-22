@@ -1,43 +1,36 @@
-class Gemzer 
-{
-    constructor(id)
-    {   
-        this.pid = (id) ? id : socket.io.engine.id;    
+class Gemzer {
+    constructor(id) {
+        this.pid = id;
         this.name = "myName";
         this.pos = createVector();
         this.life = 100;
         this.vel = 9;
         console.log(this.pid);
     }
-    renderThis()
-    {   
-        ellipse(width/2, height/2, this.life);
+    renderThis() {
+        ellipse(width / 2, height / 2, this.life);
     }
-    
-    moveUp()
-    {
-        
+
+    moveUp() {
+
         this.pos = gMap.mapUp(this.vel);
     }
-    moveDown()
-    {
-        
+    moveDown() {
+
         this.pos = gMap.mapDown(this.vel);
     }
-    moveLeft()
-    {
-        
+    moveLeft() {
+
         this.pos = gMap.mapLeft(this.vel);
     }
-    moveRight()
-    {
-       
+    moveRight() {
+
         this.pos = gMap.mapRight(this.vel);
     }
 
 }
-class Enemzer extends Gemzer{
-    renderThis(x,y){
+class Enemzer extends Gemzer {
+    renderThis(x, y) {
         ellipse(x, y, this.life);
     }
 

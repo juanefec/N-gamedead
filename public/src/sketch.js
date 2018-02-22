@@ -2,6 +2,8 @@ let gMap;
 
 let pl;
 
+let svSync = false;
+
 let socket;
 
 let enemyHand;
@@ -13,23 +15,36 @@ let keys = {
     left: false
 };
 
+function preload() {
+    connectToServer();
+}
+
 function setup() {
 
 
-    connectToServer();
+
 
     enemyHand = new EnemyHandler();
     gMap = new Map();
-    pl = new Gemzer();
+
+
+
 
 
     createCanvas(windowWidth - 40, windowHeight - 40);
 
 
 }
+let start = false;
 
 function draw() {
-    run();
+    if (start) {
+        run();
+    } else if (socket.io.engine.id != null && socket.io.engine.id != undefined) {
+        start = true;
+        pl = new Gemzer(socket.io.engine.id);
+    }
+
 
 }
 
@@ -37,20 +52,24 @@ function run() {
     screenColor();
     move();
     pl.renderThis();
-    gMap.renderPlayersOnSight(enemyHand.enemysOnGame);
+    gMap.renderMap(enemyHand.enemysOnGame);
 
     socket.emit('updatePlayer', { id: pl.pid, x: pl.pos.x, y: pl.pos.y });
 
 }
 
+function mousePressed() {
+
+}
 
 function windowResized() {
     resizeCanvas(windowWidth, windowHeight);
 }
 
 function connectToServer() {
-    socket = io.connect('http://192.168.1.18:3000');
+    socket = io('http://192.168.1.18:3000');
     eventer();
+
 
 }
 
