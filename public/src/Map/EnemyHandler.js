@@ -23,12 +23,14 @@ function EnemyHandler() {
 
 
     }
-    this.deleteEnemy = function(id) {
-        for (let i = 0; i < this.enemysOnGame.lenght; i++) {
-            if (id == this.enemysOnGame[i].pid) {
-                this.enemysOnGame.slice(1, i);
+    this.deleteEnemy = function(enemyID) {
+        this.enemysOnGame.forEach((e, i) =>  {
+            if (enemyID == e.pid) {
+                this.enemysOnGame.splice(i, 1);
+                return;
             }
-        }
+        });
+       
     }
 
     this.updateEnemy = function(enemy) {

@@ -2,14 +2,12 @@ class Map {
     constructor() {
         this.totx = 5000;
         this.toty = 4000;
-        this.rendedXpos = this.totx / 2;
-        this.rendedYpos = this.toty / 2;
+        this.rendedXpos = random(0, this.totx);
+        this.rendedYpos = random(0, this.toty);
         this.xtraSize = 60;
 
     }
-    playerOnEdge() {
-
-    }
+    
     mapUp(q) {
         this.rendedYpos = this.rendedYpos - q;
         return createVector(this.rendedXpos, this.rendedYpos);
@@ -31,7 +29,7 @@ class Map {
     }
     renderMap(players) {
         this.renderPlayersOnSight(players);
-        //this.renderEdgeMap();
+        this.renderEdgeMap();
     }
     renderPlayersOnSight(players) {
         this.filterOnSightPlayers(players).forEach(p => {
@@ -58,22 +56,27 @@ class Map {
         }
     }
     renderEdgeMap() {
+        noStroke();
+        fill(0);
         if (this.rendedXpos + width / 2 > this.totx) {
             let x = map(this.totx, this.rendedXpos - width / 2, this.rendedXpos + width / 2, 0, width);
-            rect(x, 0, 1000, height);
+            rect(x, 0, 1000, height);            
         }
         if (this.rendedYpos + height / 2 > this.toty) {
             let y = map(this.toty, this.rendedYpos - height / 2, this.rendedYpos + height / 2, 0, height);
-            rect(0, y, 1000, height);
+            rect(0, y, width, 1000);
         }
         if (this.rendedXpos - width / 2 < 0) {
-            let x = map(this.totx, this.rendedXpos - width / 2, this.rendedXpos + width / 2, 0, width);
-            rect(x, 0, -1000, height);
+            let x = map(0, this.rendedXpos - width / 2, this.rendedXpos + width / 2, 0, width);
+            rect(x-1000, 0, 1000, height);            
         }
         if (this.rendedYpos - height / 2 < 0) {
-            let y = map(this.toty, this.rendedYpos - height / 2, this.rendedYpos + height / 2, 0, height);
-            rect(0, y, -1000, height);
+            let y = map(0, this.rendedYpos - height / 2, this.rendedYpos + height / 2, 0, height);
+            rect(0, y-1000, width, 1000);            
         }
+    }
+    renderMiniMap(){
+        
     }
 
 }

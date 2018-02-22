@@ -2,13 +2,15 @@ class Gemzer {
     constructor(id) {
         this.pid = id;
         this.name = "myName";
-        this.pos = createVector();
+        this.pos = gMap.playerPosOnGame();
         this.life = 100;
         this.vel = 9;
-        console.log(this.pid);
     }
     renderThis() {
-        ellipse(width / 2, height / 2, this.life);
+        let size = map(this.life, 0, 100, 18, 62);
+        fill(43, 255, 147);
+        ellipse(width / 2, height / 2, size);
+        //console.log(this)
     }
 
     moveUp() {
@@ -31,7 +33,10 @@ class Gemzer {
 }
 class Enemzer extends Gemzer {
     renderThis(x, y) {
-        ellipse(x, y, this.life);
+        let size = map(this.life, 0, 100, 18, 62);
+        fill(244, 99, 169);
+        ellipse(x, y, size);
+        //console.log(this)
     }
 
 }

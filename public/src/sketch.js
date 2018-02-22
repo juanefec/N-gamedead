@@ -20,18 +20,9 @@ function preload() {
 }
 
 function setup() {
-
-
-
-
     enemyHand = new EnemyHandler();
     gMap = new Map();
-
-
-
-
-
-    createCanvas(windowWidth - 40, windowHeight - 40);
+    createCanvas(windowWidth , windowHeight);
 
 
 }
@@ -53,13 +44,12 @@ function run() {
     move();
     pl.renderThis();
     gMap.renderMap(enemyHand.enemysOnGame);
-
     socket.emit('updatePlayer', { id: pl.pid, x: pl.pos.x, y: pl.pos.y });
 
 }
 
 function mousePressed() {
-
+    
 }
 
 function windowResized() {
@@ -67,7 +57,7 @@ function windowResized() {
 }
 
 function connectToServer() {
-    socket = io('http://192.168.1.18:3000');
+    socket = io('http://192.168.1.3:3000');
     eventer();
 
 

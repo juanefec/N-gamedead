@@ -70,12 +70,13 @@ io.sockets.on('connection', (socket) => {
         for (let i = 0; i < players.length; i++) {
             //checks who is the one that left the server
             if (players[i].id == socket.id) {
-                socket.broadcast.emit('playerDisconnected', players[i]);
+                socket.broadcast.emit('playerDisconnected', socket.id);
                 //delet my socket players[] array
                 players.splice(i, 1);
+                console.log("Total connections: " + players.length);
             }
         }
-        console.log("Total connections: " + players.length);
+        
     });
 });
 
