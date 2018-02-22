@@ -1,9 +1,10 @@
 function eventer() {
+
     socket.on('initPlayer', (enemys) => {
         enemys.forEach(enemy => {
-                enemyHand.addEnemy(enemy);
+            enemyHand.addEnemy(enemy);
         });
-        
+
     });
     socket.on('updatePlayer', (enemy) => {
         if (enemy.id != pl.pid) {
@@ -16,6 +17,9 @@ function eventer() {
         };
         enemyHand.addEnemy(enemy);
         socket.emit('newPlayer', true);
+    });
+    socket.on('newShot', data => {
+        shotHand.addShot(data);
     });
     socket.on('playerDisconnected', (player) => {
         enemyHand.deleteEnemy(player);
