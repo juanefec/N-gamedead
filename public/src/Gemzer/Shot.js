@@ -7,10 +7,10 @@ function Shot({ x, y, tx, ty, e, userid, uuid }) {
     this.m = createVector(tx, ty);
     this.dir = this.m.sub(this.pos);
     this.dir.normalize();
-    this.dir.mult(16);
+    this.dir.mult(22);
     this.sid = uuid;
     this.show = function() {
-        this.pos.add(this.dir);
+
         noStroke();
         if (this.e) {
             fill(this.en);
@@ -18,6 +18,16 @@ function Shot({ x, y, tx, ty, e, userid, uuid }) {
             fill(this.mi);
         }
         ellipse(this.pos.x, this.pos.y, 8);
+    }
+    this.show = function(x, y) {
+
+        noStroke();
+        if (this.e) {
+            fill(this.en);
+        } else {
+            fill(this.mi);
+        }
+        ellipse(x, y, 8);
     }
     this.update = function() {
         this.pos.add(this.dir);

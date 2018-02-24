@@ -31,6 +31,7 @@ class Map {
         this.renderPlayers(players);
         this.renderEdgeMap();
         this.renderShots(shots);
+        this.renderMiniMap(players);
     }
     renderPlayers(players) {
         this.filterOnSight(players).forEach(p => {
@@ -44,7 +45,7 @@ class Map {
         this.filterOnSight(shots).forEach(s => {
             let x = map(s.pos.x, this.rendedXpos - width / 2, this.rendedXpos + width / 2, 0, width);
             let y = map(s.pos.y, this.rendedYpos - height / 2, this.rendedYpos + height / 2, 0, height);
-            s.show();
+            s.show(x, y);
             console.log('asd')
         });
     }
@@ -85,8 +86,32 @@ class Map {
             rect(0, y - 1000, width, 1000);
         }
     }
-    renderMiniMap() {
+    renderMiniMap(players) {
+        let mapw = map(this.totx, 0, this.totx, 0, width / 4),
+            maph = map(this.toty, 0, this.toty, 0, height / 4);
+        let x = width - mapw,
+            y = height - maph;
+        fill(100, 100);
+        rect(x, y, mapw, maph);
+
+        let px = map(this.playerPosOnGame().x, 0, this.totx, x, x + mapw),
+            py = map(this.playerPosOnGame().y, 0, this.toty, y, y + maph);
+        let xd = map(width / 2, 0, this.totx, 0, mapw),
+            yd = map(height / 2, 0, this.toty, 0, maph);
+
+        rectMode(CORNERS);
+        rect(px - xd, py - yd, px + xd, py + yd);
+        rectMode(CORNER);
+
+
+        players.forEach(p => {
+            let ex = map(p.pos.x, 0, this.totx, x, x + mapw),
+                ey = map(p.pos.y, 0, this.toty, y, y + maph);
+            fill(0, 100);
+            ellipse(ex, ey, 3);
+        });
 
     }
+
 
 }

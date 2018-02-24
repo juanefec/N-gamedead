@@ -24,19 +24,20 @@ function EnemyHandler() {
 
     }
     this.deleteEnemy = function(enemyID) {
-        this.enemysOnGame.forEach((e, i) =>  {
+        this.enemysOnGame.forEach((e, i) => {
             if (enemyID == e.pid) {
                 this.enemysOnGame.splice(i, 1);
                 return;
             }
         });
-       
+
     }
 
     this.updateEnemy = function(enemy) {
         this.enemysOnGame.forEach(e => {
             if (e.pid == enemy.id) {
                 e.pos.set([enemy.x, enemy.y]);
+                e.life = enemy.life;
             }
         });
 

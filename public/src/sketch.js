@@ -1,5 +1,6 @@
 let gMap;
 
+let border = 100;
 let pl;
 
 let svSync = false;
@@ -24,8 +25,8 @@ function setup() {
     enemyHand = new EnemyHandler();
     shotHand = new ShotHandler();
     gMap = new Map();
-    createCanvas(windowWidth, windowHeight);
-
+    createCanvas(windowWidth - border, windowHeight - border);
+    noCursor();
 
 }
 let start = false;
@@ -33,6 +34,9 @@ let start = false;
 function draw() {
     if (start) {
         run();
+        if (mouseIsPressed) {
+            shotHand.uzi();
+        }
     } else if (socket.io.engine.id !== null && typeof socket.io.engine.id !== 'undefined' && socket.io.engine.id != null && socket.io.engine.id !== undefined) {
         start = true;
         pl = new Gemzer(socket.io.engine.id);
@@ -53,27 +57,32 @@ function mouseCoordY() {
 function run() {
     screenColor();
     move();
-    pl.renderThis();
     shotHand.updateShots();
     gMap.renderMap(enemyHand.enemysOnGame, shotHand.shotsFired);
-    socket.emit('updatePlayer', { id: pl.pid, x: pl.pos.x, y: pl.pos.y });
+    pl.renderThis();
+    shotHand.uziInfoRender();
+    aimer();
+    socket.emit('updatePlayer', { id: pl.pid, x: pl.pos.x, y: pl.pos.y, life: pl.life });
 
 }
 
+function aimer() {
+    rectMode(CENTER);
+    rect(mouseX, mouseY, 4, 18);
+    rect(mouseX, mouseY, 18, 4);
+    rectMode(CORNER);
+}
 
 function mousePressed() {
-    let data = { x: pl.pos.x, y: pl.pos.y, tx: mouseCoordX(), ty: mouseCoordY(), e: false, userid: pl.pid, uuid: 'no' };
-    console.log(mouseCoordX() + '          ' + mouseCoordY());
-    shotHand.addShot(data);
-    socket.emit('newShot', data);
+
 }
 
 function windowResized() {
-    resizeCanvas(windowWidth, windowHeight);
+    resizeCanvas(windowWidth - border, windowHeight - border);
 }
 
 function connectToServer() {
-    socket = io('http://192.168.1.18:3000');
+    socket = io('http://192.168.1.3:3000');
     eventer();
 
 
@@ -81,7 +90,7 @@ function connectToServer() {
 
 function screenColor() {
     let r = map(gMap.rendedXpos, 0, 5000, 0, 255);
-    let g = map(gMap.rendedXpos, 0, 5000, 255, 0);
+    let g = map(gMap.rendedYpos, 0, 5000, 255, 0);
     let b = map(gMap.rendedYpos, 0, 4000, 0, 255);
     background(r, g, b);
 }

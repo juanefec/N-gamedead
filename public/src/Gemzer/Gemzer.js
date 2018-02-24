@@ -4,15 +4,33 @@ class Gemzer {
         this.name = "myName";
         this.pos = gMap.playerPosOnGame();
         this.life = 100;
-        this.vel = 9;
+        this.vel = map(this.life, 0, 100, 13, 4.5);
     }
     renderThis() {
-        let size = map(this.life, 0, 100, 18, 62);
+        this.updateVel();
+        let size = this.getRadius();
         fill(43, 255, 147);
         ellipse(width / 2, height / 2, size);
         //console.log(this)
     }
-
+    updateVel() {
+        this.vel = map(this.life, 0, 100, 13, 4.5);
+    }
+    getRadius() {
+        return map(this.life, 0, 100, 32, 88);
+    }
+    damage(n = 1) {
+        if (this.alive()) {
+            this.life -= n * 10;
+        }
+    }
+    alive() {
+        if (this.life <= 0) {
+            return false;
+        } else {
+            return true;
+        }
+    }
     moveUp() {
 
         this.pos = gMap.mapUp(this.vel);
@@ -41,7 +59,7 @@ class Enemzer extends Gemzer {
         this.vel = 9;
     }
     renderThis(x, y) {
-        let size = map(this.life, 0, 100, 18, 62);
+        let size = this.getRadius();
         fill(244, 99, 169);
         ellipse(x, y, size);
         //console.log(this)
