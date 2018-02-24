@@ -22,6 +22,7 @@ io.sockets.on('connection', (socket) => {
     //sends to all clients that a new player has connected
     //send the players array with the clients previously connected at server		
     socket.emit('initPlayer', players);
+    socket.emit('randomstuff4map', createRandomStuff4Map());
     socket.broadcast.emit('newPlayer', socket.id);
 
 
@@ -76,7 +77,7 @@ io.sockets.on('connection', (socket) => {
                 console.log("Total connections: " + players.length);
             }
         }
-        
+
     });
 });
 
@@ -84,4 +85,16 @@ function resState(state, res) {
     if (state) {
 
     }
+}
+
+function createRandomStuff4Map() {
+    let randomstuff = [];
+    for (let i = 0; i < 25; i++) {
+        let ex = Math.random() * 5000,
+            ey = Math.random() * 4000;
+
+        console.log(ex + '  ' + ey)
+        randomstuff.push({ pos: { x: ex, y: ey } });
+    }
+    return randomstuff;
 }

@@ -1,6 +1,6 @@
 let gMap;
 
-let border = 100;
+
 let pl;
 
 let svSync = false;
@@ -25,7 +25,9 @@ function setup() {
     enemyHand = new EnemyHandler();
     shotHand = new ShotHandler();
     gMap = new Map();
-    createCanvas(windowWidth - border, windowHeight - border);
+    let canvas = createCanvas(windowWidth, windowHeight);
+
+    canvas.style('display', 'block');
     noCursor();
 
 }
@@ -78,7 +80,7 @@ function mousePressed() {
 }
 
 function windowResized() {
-    resizeCanvas(windowWidth - border, windowHeight - border);
+    resizeCanvas(windowWidth, windowHeight);
 }
 
 function connectToServer() {

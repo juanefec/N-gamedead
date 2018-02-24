@@ -5,6 +5,7 @@ class Map {
         this.rendedXpos = random(0, this.totx);
         this.rendedYpos = random(0, this.toty);
         this.xtraSize = 60;
+        this.randomstuff = [];
 
     }
 
@@ -32,6 +33,7 @@ class Map {
         this.renderEdgeMap();
         this.renderShots(shots);
         this.renderMiniMap(players);
+        this.renderRandomStuffMap()
     }
     renderPlayers(players) {
         this.filterOnSight(players).forEach(p => {
@@ -86,6 +88,20 @@ class Map {
             rect(0, y - 1000, width, 1000);
         }
     }
+    addRandomStuff(stuff) {
+        stuff.forEach(t => {
+            this.randomstuff.push(t);
+        });
+    }
+    renderRandomStuffMap() {
+        this.filterOnSight(this.randomstuff).forEach(thing => {
+            ellipse(thing.pos.x, thing.pos.y, this.totx / 13, this.toty / 6);
+
+
+            //rect(thing.pos.x, thing.pos.y, this.totx / 7, this.toty / 9);
+
+        });
+    }
     renderMiniMap(players) {
         let mapw = map(this.totx, 0, this.totx, 0, width / 4),
             maph = map(this.toty, 0, this.toty, 0, height / 4);
@@ -108,7 +124,7 @@ class Map {
             let ex = map(p.pos.x, 0, this.totx, x, x + mapw),
                 ey = map(p.pos.y, 0, this.toty, y, y + maph);
             fill(0, 100);
-            ellipse(ex, ey, 3);
+            ellipse(ex, ey, 4);
         });
 
     }

@@ -11,6 +11,9 @@ function eventer() {
             enemyHand.updateEnemy(enemy);
         }
     });
+    socket.on('randomstuff4map', stuff => {
+        gMap.addRandomStuff(stuff);
+    });
     socket.on('newPlayer', (newID) => {
         let enemy = {
             id: newID
