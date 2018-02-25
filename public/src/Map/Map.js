@@ -10,30 +10,49 @@ class Map {
     }
 
     mapUp(q) {
-        this.rendedYpos = this.rendedYpos - q;
-        return createVector(this.rendedXpos, this.rendedYpos);
+        if (this.rendedYpos - pl.getRadius() / 2 > 0) {
+            this.rendedYpos = this.rendedYpos - q;
+            return createVector(this.rendedXpos, this.rendedYpos);
+        } else {
+            return this.playerPosOnGame();
+        }
     }
     mapDown(q) {
-        this.rendedYpos = this.rendedYpos + q;
-        return createVector(this.rendedXpos, this.rendedYpos);
+        if (this.rendedYpos + pl.getRadius() / 2 < this.toty) {
+            this.rendedYpos = this.rendedYpos + q;
+            return createVector(this.rendedXpos, this.rendedYpos);
+        } else {
+            return this.playerPosOnGame();
+        }
     }
     mapRight(q) {
-        this.rendedXpos = this.rendedXpos + q;
-        return createVector(this.rendedXpos, this.rendedYpos);
+        if (this.rendedXpos + pl.getRadius() / 2 < this.totx) {
+            this.rendedXpos = this.rendedXpos + q;
+            return createVector(this.rendedXpos, this.rendedYpos);
+        } else {
+            return this.playerPosOnGame();
+        }
     }
     mapLeft(q) {
-        this.rendedXpos = this.rendedXpos - q;
-        return createVector(this.rendedXpos, this.rendedYpos);
+        if (this.rendedXpos - pl.getRadius() / 2 > 0) {
+            this.rendedXpos = this.rendedXpos - q;
+            return createVector(this.rendedXpos, this.rendedYpos);
+        } else {
+            return this.playerPosOnGame();
+        }
     }
     playerPosOnGame() {
         return createVector(this.rendedXpos, this.rendedYpos);
+    }
+    onRandomThing() {
+
     }
     renderMap(players, shots) {
         this.renderPlayers(players);
         this.renderEdgeMap();
         this.renderShots(shots);
-        this.renderMiniMap(players);
         this.renderRandomStuffMap()
+        this.renderMiniMap(players);
     }
     renderPlayers(players) {
         this.filterOnSight(players).forEach(p => {
@@ -48,7 +67,7 @@ class Map {
             let x = map(s.pos.x, this.rendedXpos - width / 2, this.rendedXpos + width / 2, 0, width);
             let y = map(s.pos.y, this.rendedYpos - height / 2, this.rendedYpos + height / 2, 0, height);
             s.show(x, y);
-            console.log('asd')
+
         });
     }
     filterOnSight(all) {
@@ -61,10 +80,18 @@ class Map {
         return onSight;
     }
     isOnSight(pos) {
-        if (pos.x < this.rendedXpos + (width / 2) && pos.x > this.rendedXpos - (width / 2) && pos.y < this.rendedYpos + (height / 2) && pos.y > this.rendedYpos - (height / 2)) {
-            return true;
+        if (pos.d) {
+            if (pos.x < this.rendedXpos + (width / 2) + pos.d && pos.x > this.rendedXpos - (width / 2) - pos.d && pos.y < this.rendedYpos + (height / 2) + pos.d && pos.y > this.rendedYpos - (height / 2) - pos.d) {
+                return true;
+            } else {
+                return false;
+            }
         } else {
-            return false;
+            if (pos.x < this.rendedXpos + (width / 2) && pos.x > this.rendedXpos - (width / 2) && pos.y < this.rendedYpos + (height / 2) && pos.y > this.rendedYpos - (height / 2)) {
+                return true;
+            } else {
+                return false;
+            }
         }
     }
 
@@ -95,7 +122,10 @@ class Map {
     }
     renderRandomStuffMap() {
         this.filterOnSight(this.randomstuff).forEach(thing => {
-            ellipse(thing.pos.x, thing.pos.y, this.totx / 13, this.toty / 6);
+            let x = map(thing.pos.x, pl.pos.x - width / 2, pl.pos.x + width / 2, 0, width);
+            let y = map(thing.pos.y, pl.pos.y - height / 2, pl.pos.y + height / 2, 0, height);
+            fill(70);
+            ellipse(x, y, thing.pos.d);
 
 
             //rect(thing.pos.x, thing.pos.y, this.totx / 7, this.toty / 9);
@@ -118,12 +148,14 @@ class Map {
         rectMode(CORNERS);
         rect(px - xd, py - yd, px + xd, py + yd);
         rectMode(CORNER);
+        fill(90, 255, 130);
+        ellipse(px, py, 4);
 
 
         players.forEach(p => {
             let ex = map(p.pos.x, 0, this.totx, x, x + mapw),
                 ey = map(p.pos.y, 0, this.toty, y, y + maph);
-            fill(0, 100);
+            fill(255, 80, 80);
             ellipse(ex, ey, 4);
         });
 

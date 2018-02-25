@@ -8,7 +8,7 @@ var socket = require('socket.io');
 var io = socket(server);
 //array for sockets
 var players = [];
-
+var randomstuff = createRandomStuff4Map();
 
 io.sockets.on('connection', (socket) => {
     let loadstate = false;
@@ -22,7 +22,7 @@ io.sockets.on('connection', (socket) => {
     //sends to all clients that a new player has connected
     //send the players array with the clients previously connected at server		
     socket.emit('initPlayer', players);
-    socket.emit('randomstuff4map', createRandomStuff4Map());
+    socket.emit('randomstuff4map', randomstuff);
     socket.broadcast.emit('newPlayer', socket.id);
 
 
@@ -90,11 +90,10 @@ function resState(state, res) {
 function createRandomStuff4Map() {
     let randomstuff = [];
     for (let i = 0; i < 25; i++) {
-        let ex = Math.random() * 5000,
-            ey = Math.random() * 4000;
-
-        console.log(ex + '  ' + ey)
-        randomstuff.push({ pos: { x: ex, y: ey } });
+        let ex = (Math.random() * 4200) + 500,
+            ey = (Math.random() * 3300) + 500,
+            ed = (Math.random() * 650) + 100;
+        randomstuff.push({ pos: { x: ex, y: ey, d: ed } });
     }
     return randomstuff;
 }

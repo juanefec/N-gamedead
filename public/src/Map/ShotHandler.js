@@ -1,27 +1,46 @@
-function ShotHandler() {
-    this.shotsFired = [];
-    this.updateShots = function() {
+class ShotHandler {
+    constructor() {
+        this.shotsFired = [];
+        this.uziShots = 20;
+        this.startReaload = 0;
+        this.lastShot = 0;
+        this.reloading = false;
+        this.reloadDelay = 45;
+        this.reloadProgress = 0;
+    }
+
+    updateShots() {
         this.shotsFired.forEach(s => {
             s.update();
+            if (s.outOfMap) {
+                if (gMap.isOnSight(s.pos)) {
+                    let x = map(s.pos.x, pl.pos.x - width / 2, pl.pos.x + width / 2, 0, width),
+                        y = map(s.pos.y, pl.pos.y - height / 2, pl.pos.y + height / 2, 0, height);
+                    fill(255);
+                    ellipse(x, y, 35);
+                }
+                this.killShot(s.sid);
+                console.log(s)
+            }
         });
         this.checkShotCollition();
     }
-    this.addShot = function(data) {
+    addShot(data) {
         if (data.userid != pl.pid) {
             this.shotsFired.push(new Shot(data));
         } else {
-            data.sid = this.uuidgen();
+            data.uuid = this.uuidgen();
             this.shotsFired.push(new Shot(data));
         }
     }
-    this.killShot = function(uuid) {
+    killShot(uuid) {
         this.shotsFired.forEach((s, i) => {
             if (uuid == s.sid) {
                 this.shotsFired.splice(i, 1);
             }
         });
     }
-    this.checkShotCollition = function() {
+    checkShotCollition() {
         gMap.filterOnSight(this.shotsFired).forEach((s, i) => {
             if (s.pos.x > pl.pos.x - pl.getRadius() / 2 && s.pos.x < pl.pos.x + pl.getRadius() / 2 && s.pos.y > pl.pos.y - pl.getRadius() / 2 && s.pos.y < pl.pos.y + pl.getRadius() / 2 && s.userid != pl.pid) {
                 this.killShot(s.sid);
@@ -36,18 +55,13 @@ function ShotHandler() {
             });
         });
     }
-    this.uziShots = 20;
-    this.startReaload = 0;
-    this.lastShot = 0;
-    this.reloading = false;
-    this.reloadDelay = 45;
-    this.reloadProgress = 0;
 
-    this.uzi = function() {
+
+    uzi() {
         if (!this.reloading) {
             let now = frameCount;
             if (this.uziShots > 0) {
-                if (now > this.lastShot + 5) {
+                if (now > this.lastShot + 3) {
                     if (pl.alive()) {
                         this.uziShots--;
                         let data = { x: pl.pos.x, y: pl.pos.y, tx: mouseCoordX(), ty: mouseCoordY(), e: false, userid: pl.pid, uuid: 'no' };
@@ -65,16 +79,17 @@ function ShotHandler() {
 
     }
 
-    this.uziInfoRender = function() {
+    uziInfoRender() {
         this.reloader();
         if (this.reloading) {
-            rect(width - 25, 65, 15, this.reloadProgress);
+            rect(width - width / 24, height / 20 - 35, 15, this.reloadProgress);
         } else {
-            text(this.uziShots, width - 40, 40);
+            textSize(26);
+            text(this.uziShots, width - width / 22, height / 20);
         }
     }
 
-    this.reloader = function() {
+    reloader() {
         let now = frameCount;
         let diff = (this.startReaload + this.reloadDelay) - now;
         this.reloadProgress = map(diff, 45, 0, 0, 100);
@@ -83,7 +98,7 @@ function ShotHandler() {
             this.reloading = false;
         }
     }
-    this.uuidgen = function(a) {
+    uuidgen(a) {
         return a // if the placeholder was passed, return
             ?
             ( // a random number from 0 to 15

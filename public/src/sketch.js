@@ -29,6 +29,7 @@ function setup() {
 
     canvas.style('display', 'block');
     noCursor();
+    frameRate(60);
 
 }
 let start = false;
@@ -59,8 +60,8 @@ function mouseCoordY() {
 function run() {
     screenColor();
     move();
-    shotHand.updateShots();
     gMap.renderMap(enemyHand.enemysOnGame, shotHand.shotsFired);
+    shotHand.updateShots();
     pl.renderThis();
     shotHand.uziInfoRender();
     aimer();
@@ -76,7 +77,7 @@ function aimer() {
 }
 
 function mousePressed() {
-
+    console.log(mouseCoordX() + '       ' + mouseCoordY());
 }
 
 function windowResized() {
