@@ -1,7 +1,7 @@
 class Map {
     constructor() {
-        this.totx = 5000;
-        this.toty = 4000;
+        this.totx = 9000;
+        this.toty = 7000;
         this.rendedXpos = random(0, this.totx);
         this.rendedYpos = random(0, this.toty);
         this.xtraSize = 60;
@@ -44,14 +44,21 @@ class Map {
     playerPosOnGame() {
         return createVector(this.rendedXpos, this.rendedYpos);
     }
-    onRandomThing() {
-
+    collisionRandomThing() {
+        let bool = false;
+        this.filterOnSight(this.randomstuff).forEach(t => {
+            let d = dist(t.pos.x, t.pos.y, pl.pos.x, pl.pos.y);
+            if (d < t.pos.d + pl.getRadius() / 2) {
+                bool = true;
+            }
+        });
+        return bool;
     }
     renderMap(players, shots) {
         this.renderPlayers(players);
-        this.renderEdgeMap();
-        this.renderShots(shots);
         this.renderRandomStuffMap()
+        this.renderMapWalls();
+        this.renderShots(shots);
         this.renderMiniMap(players);
     }
     renderPlayers(players) {
@@ -70,6 +77,15 @@ class Map {
 
         });
     }
+    renderExplotions(shots) {
+        this.filterOnSight(shots).forEach(s => {
+            let x = map(s.pos.x, this.rendedXpos - width / 2, this.rendedXpos + width / 2, 0, width);
+            let y = map(s.pos.y, this.rendedYpos - height / 2, this.rendedYpos + height / 2, 0, height);
+            s.show(x, y);
+
+        });
+    }
+
     filterOnSight(all) {
         let onSight = [];
         all.forEach(el => {
@@ -95,24 +111,24 @@ class Map {
         }
     }
 
-    renderEdgeMap() {
+    renderMapWalls() {
         noStroke();
         fill(0);
         if (this.rendedXpos + width / 2 > this.totx) {
             let x = map(this.totx, this.rendedXpos - width / 2, this.rendedXpos + width / 2, 0, width);
-            rect(x, 0, 1000, height);
+            rect(x, 0, 4000, height);
         }
         if (this.rendedYpos + height / 2 > this.toty) {
             let y = map(this.toty, this.rendedYpos - height / 2, this.rendedYpos + height / 2, 0, height);
-            rect(0, y, width, 1000);
+            rect(0, y, width, 4000);
         }
         if (this.rendedXpos - width / 2 < 0) {
             let x = map(0, this.rendedXpos - width / 2, this.rendedXpos + width / 2, 0, width);
-            rect(x - 1000, 0, 1000, height);
+            rect(x - 4000, 0, 4000, height);
         }
         if (this.rendedYpos - height / 2 < 0) {
             let y = map(0, this.rendedYpos - height / 2, this.rendedYpos + height / 2, 0, height);
-            rect(0, y - 1000, width, 1000);
+            rect(0, y - 4000, width, 4000);
         }
     }
     addRandomStuff(stuff) {

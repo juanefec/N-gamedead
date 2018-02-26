@@ -24,6 +24,9 @@ function eventer() {
     socket.on('newShot', data => {
         shotHand.addShot(data);
     });
+    socket.on('newRocket', data => {
+        shotHand.addRocket(data);
+    });
     socket.on('playerDisconnected', (player) => {
         enemyHand.deleteEnemy(player);
     });

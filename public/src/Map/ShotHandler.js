@@ -1,7 +1,8 @@
 class ShotHandler {
     constructor() {
         this.shotsFired = [];
-        this.uziShots = 20;
+        this.explotions = [];
+        this.shotsleft = 20;
         this.startReaload = 0;
         this.lastShot = 0;
         this.reloading = false;
@@ -12,15 +13,8 @@ class ShotHandler {
     updateShots() {
         this.shotsFired.forEach(s => {
             s.update();
-            if (s.outOfMap) {
-                if (gMap.isOnSight(s.pos)) {
-                    let x = map(s.pos.x, pl.pos.x - width / 2, pl.pos.x + width / 2, 0, width),
-                        y = map(s.pos.y, pl.pos.y - height / 2, pl.pos.y + height / 2, 0, height);
-                    fill(255);
-                    ellipse(x, y, 35);
-                }
+            if (s.outOfMap || s.onThing(gMap.randomstuff)) {
                 this.killShot(s.sid);
-                console.log(s)
             }
         });
         this.checkShotCollition();
@@ -33,9 +27,23 @@ class ShotHandler {
             this.shotsFired.push(new Shot(data));
         }
     }
+    addRocket(data) {
+        if (data.userid != pl.pid) {
+            this.shotsFired.push(new Rocket(data));
+        } else {
+            data.uuid = this.uuidgen();
+            this.shotsFired.push(new Rocket(data));
+        }
+    }
     killShot(uuid) {
         this.shotsFired.forEach((s, i) => {
             if (uuid == s.sid) {
+
+                if (gMap.isOnSight(s.pos)) {
+                    let x = map(s.pos.x, pl.pos.x - width / 2, pl.pos.x + width / 2, 0, width),
+                        y = map(s.pos.y, pl.pos.y - height / 2, pl.pos.y + height / 2, 0, height);
+                    s.explode(x, y, 550);
+                }
                 this.shotsFired.splice(i, 1);
             }
         });
@@ -60,10 +68,10 @@ class ShotHandler {
     uzi() {
         if (!this.reloading) {
             let now = frameCount;
-            if (this.uziShots > 0) {
+            if (this.shotsleft > 0) {
                 if (now > this.lastShot + 3) {
                     if (pl.alive()) {
-                        this.uziShots--;
+                        this.shotsleft--;
                         let data = { x: pl.pos.x, y: pl.pos.y, tx: mouseCoordX(), ty: mouseCoordY(), e: false, userid: pl.pid, uuid: 'no' };
                         this.addShot(data);
                         socket.emit('newShot', data);
@@ -73,19 +81,41 @@ class ShotHandler {
             } else {
                 this.startReaload = frameCount;
                 this.reloading = true;
-                this.uziShots = 20;
+                this.shotsleft = 20;
             }
         }
 
     }
 
-    uziInfoRender() {
+    rocketLuncher() {
+        if (!this.reloading) {
+            let now = frameCount;
+            if (this.shotsleft > 0) {
+                if (now > this.lastShot + 3) {
+                    if (pl.alive()) {
+                        this.shotsleft--;
+                        let data = { x: pl.pos.x, y: pl.pos.y, tx: mouseCoordX(), ty: mouseCoordY(), e: false, userid: pl.pid, uuid: 'no' };
+                        this.addRocket(data);
+                        socket.emit('newRocket', data);
+                        this.lastShot = frameCount;
+                    }
+                }
+            } else {
+                this.startReaload = frameCount;
+                this.reloading = true;
+                this.shotsleft = 1;
+            }
+        }
+
+    }
+
+    gunInfoRender() {
         this.reloader();
         if (this.reloading) {
             rect(width - width / 24, height / 20 - 35, 15, this.reloadProgress);
         } else {
             textSize(26);
-            text(this.uziShots, width - width / 22, height / 20);
+            text(this.shotsleft, width - width / 22, height / 20);
         }
     }
 

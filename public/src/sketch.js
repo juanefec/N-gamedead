@@ -37,15 +37,27 @@ let start = false;
 function draw() {
     if (start) {
         run();
-        if (mouseIsPressed) {
-            shotHand.uzi();
-        }
+
     } else if (socket.io.engine.id !== null && typeof socket.io.engine.id !== 'undefined' && socket.io.engine.id != null && socket.io.engine.id !== undefined) {
         start = true;
         pl = new Gemzer(socket.io.engine.id);
     }
 
 
+}
+
+function shoot() {
+    if (mouseIsPressed) {
+        if (mouseButton === LEFT) {
+
+            shotHand.uzi();
+        } else {
+            if (shotHand.shotsleft > 1) {
+                shotHand.shotsleft = 1;
+            }
+            shotHand.rocketLuncher();
+        }
+    }
 }
 
 function mouseCoordX() {
@@ -63,16 +75,18 @@ function run() {
     gMap.renderMap(enemyHand.enemysOnGame, shotHand.shotsFired);
     shotHand.updateShots();
     pl.renderThis();
-    shotHand.uziInfoRender();
+    shotHand.gunInfoRender();
     aimer();
+    shoot();
     socket.emit('updatePlayer', { id: pl.pid, x: pl.pos.x, y: pl.pos.y, life: pl.life });
 
 }
 
 function aimer() {
+    fill(190);
     rectMode(CENTER);
-    rect(mouseX, mouseY, 4, 18);
-    rect(mouseX, mouseY, 18, 4);
+    rect(mouseX, mouseY, 7, 22);
+    rect(mouseX, mouseY, 22, 7);
     rectMode(CORNER);
 }
 
@@ -85,16 +99,16 @@ function windowResized() {
 }
 
 function connectToServer() {
-    socket = io('http://192.168.1.3:3000');
+    socket = io.connect('http://192.168.1.3:3000');
     eventer();
 
 
 }
 
 function screenColor() {
-    let r = map(gMap.rendedXpos, 0, 5000, 0, 255);
-    let g = map(gMap.rendedYpos, 0, 5000, 255, 0);
-    let b = map(gMap.rendedYpos, 0, 4000, 0, 255);
+    let r = map(gMap.rendedXpos, 0, 9000, 0, 80);
+    let g = map(gMap.rendedYpos, 0, 9000, 255, 0);
+    let b = map(gMap.rendedYpos, 0, 7000, 0, 170);
     background(r, g, b);
 }
 
@@ -115,32 +129,32 @@ function move() {
 
 function keyPressed() { // *TRIGGERD* with keys
 
-    if (keyCode === UP_ARROW) {
+    if (keyCode == 87) {
         keys.up = true;
     }
-    if (keyCode === DOWN_ARROW) {
+    if (keyCode == 83) {
         keys.down = true;
     }
-    if (keyCode === RIGHT_ARROW) {
+    if (keyCode == 68) {
         keys.right = true;
     }
-    if (keyCode === LEFT_ARROW) {
+    if (keyCode == 65) {
         keys.left = true;
     }
 }
 
 function keyReleased() {
 
-    if (keyCode === UP_ARROW) {
+    if (keyCode == 87) {
         keys.up = false;
     }
-    if (keyCode === DOWN_ARROW) {
+    if (keyCode == 83) {
         keys.down = false;
     }
-    if (keyCode === RIGHT_ARROW) {
+    if (keyCode == 68) {
         keys.right = false;
     }
-    if (keyCode === LEFT_ARROW) {
+    if (keyCode == 65) {
         keys.left = false;
     }
 }

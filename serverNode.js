@@ -1,7 +1,7 @@
 var express = require('express');
 var app = express();
 var server = app.listen(3000);
-console.log("server is live..");
+console.log("server is live...............");
 app.use(express.static('public'));
 
 var socket = require('socket.io');
@@ -16,7 +16,7 @@ io.sockets.on('connection', (socket) => {
     //who has connected the server
     //total clients connected
     players.push({ id: socket.id, name: "n", kills: 0, deaths: 0 });
-    console.log("Player connected " + socket.id);
+    console.log("Player connected: " + socket.id);
     console.log("Total connections: " + players.length);
 
     //sends to all clients that a new player has connected
@@ -48,6 +48,11 @@ io.sockets.on('connection', (socket) => {
     socket.on('newShot', (data) => {
         //sends to all clients that a shot has been fired by that player
         socket.broadcast.emit('newShot', data);
+    });
+    //listens to the event 'newShot' when a player shoots
+    socket.on('newRocket', (data) => {
+        //sends to all clients that a shot has been fired by that player
+        socket.broadcast.emit('newRocket', data);
     });
 
     socket.on('killed', (data) => {
@@ -89,10 +94,10 @@ function resState(state, res) {
 
 function createRandomStuff4Map() {
     let randomstuff = [];
-    for (let i = 0; i < 25; i++) {
-        let ex = (Math.random() * 4200) + 500,
-            ey = (Math.random() * 3300) + 500,
-            ed = (Math.random() * 650) + 100;
+    for (let i = 0; i < 45; i++) {
+        let ex = (Math.random() * 9200),
+            ey = (Math.random() * 7300),
+            ed = (Math.random() * 1050) + 220;
         randomstuff.push({ pos: { x: ex, y: ey, d: ed } });
     }
     return randomstuff;
