@@ -74,7 +74,6 @@ class Map {
             let x = map(s.pos.x, this.rendedXpos - width / 2, this.rendedXpos + width / 2, 0, width);
             let y = map(s.pos.y, this.rendedYpos - height / 2, this.rendedYpos + height / 2, 0, height);
             s.show(x, y);
-
         });
     }
     renderExplotions(shots) {
@@ -82,18 +81,15 @@ class Map {
             let x = map(s.pos.x, this.rendedXpos - width / 2, this.rendedXpos + width / 2, 0, width);
             let y = map(s.pos.y, this.rendedYpos - height / 2, this.rendedYpos + height / 2, 0, height);
             s.show(x, y);
-
         });
     }
 
     filterOnSight(all) {
-        let onSight = [];
-        all.forEach(el => {
+        return all.map(el => {
             if (this.isOnSight(el.pos)) {
-                onSight.push(el);
+                 return el;
             }
         });
-        return onSight;
     }
     isOnSight(pos) {
         if (pos.d) {
@@ -138,11 +134,12 @@ class Map {
     }
     renderRandomStuffMap() {
         this.filterOnSight(this.randomstuff).forEach(thing => {
+            if (thing) {
             let x = map(thing.pos.x, pl.pos.x - width / 2, pl.pos.x + width / 2, 0, width);
             let y = map(thing.pos.y, pl.pos.y - height / 2, pl.pos.y + height / 2, 0, height);
             fill(70);
             ellipse(x, y, thing.pos.d);
-
+            }
 
             //rect(thing.pos.x, thing.pos.y, this.totx / 7, this.toty / 9);
 

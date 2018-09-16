@@ -1,5 +1,4 @@
 function eventer() {
-
     socket.on('initPlayer', (enemys) => {
         enemys.forEach(enemy => {
             enemyHand.addEnemy(enemy);

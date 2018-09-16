@@ -4,19 +4,24 @@ class Gemzer {
         this.name = "myName";
         this.pos = gMap.playerPosOnGame();
         this.life = 100;
-        this.vel = map(this.life, 0, 100, 14, 6.2);
+        this.vel = 0;
+        this.acc = 0;
+        this.drag = 0.99;
     }
 
     renderThis() {
-        this.updateVel();
+        if(this.vel > 0)  this.vel *= this.drag;
         let size = this.getRadius();
         fill(43, 255, 147);
         ellipse(width / 2, height / 2, size);
         //console.log(this)
     }
-
+    
     updateVel() {
-        this.vel = map(this.life, 0, 100, 14, 6.2);
+        this.acc = map(this.life, 0, 100, 0.4, 0.09);
+        this.vel += this.acc;
+        if (this.vel >= map(this.life, 0, 100,  41, 12))this.vel = map(this.life, 0, 100, 41, 12);
+        console.log(this.vel)
     }
 
     getRadius() {

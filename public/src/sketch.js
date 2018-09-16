@@ -18,7 +18,7 @@ let keys = {
 };
 
 function preload() {
-    connectToServer();
+    
 }
 
 function setup() {
@@ -30,19 +30,39 @@ function setup() {
     canvas.style('display', 'block');
     noCursor();
     frameRate(60);
-
+    connectToServer();
+    loader  = new Loader();
 }
 let start = false;
-
+let loader;
 function draw() {
     if (start) {
         run();
 
     } else if (socket.io.engine.id !== null && typeof socket.io.engine.id !== 'undefined' && socket.io.engine.id != null && socket.io.engine.id !== undefined) {
+        
         start = true;
         pl = new Gemzer(socket.io.engine.id);
+    } else {
+        loader.boucer();
     }
 
+
+}
+function Loader() {
+    this.x = 30;
+    this.velX = 24;
+    this.y = height/2;
+    this.velY = 73;
+    this.boucer = () => {
+        background(0)
+        aimer();
+        ellipse(this.x, this.y, 60, 60);
+        if (this.x > width-30 || this.x < 30) this.velX = this.velX * -1;
+        this.x += this.velX;
+        if (this.y > height-30 || this.y < 30) this.velY = this.velY * -1;
+        this.y += this.velY;  
+    }
 
 }
 
@@ -78,8 +98,12 @@ function run() {
     shotHand.gunInfoRender();
     aimer();
     shoot();
-    socket.emit('updatePlayer', { id: pl.pid, x: pl.pos.x, y: pl.pos.y, life: pl.life });
-
+    socket.emit('updatePlayer', { 
+        id: pl.pid,
+        x: pl.pos.x,
+        y: pl.pos.y,
+        life: pl.life
+    });
 }
 
 function aimer() {
@@ -99,7 +123,7 @@ function windowResized() {
 }
 
 function connectToServer() {
-    socket = io.connect('http://192.168.1.3:3000');
+    socket = io.connect('http://localhost:3000');
     eventer();
 
 
@@ -113,6 +137,7 @@ function screenColor() {
 }
 
 function move() {
+    pl.updateVel();
     if (keys.up) {
         pl.moveUp();
     }
@@ -125,6 +150,7 @@ function move() {
     if (keys.left) {
         pl.moveLeft();
     }
+    
 }
 
 function keyPressed() { // *TRIGGERD* with keys
