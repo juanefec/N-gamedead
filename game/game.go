@@ -2,6 +2,8 @@ package game
 
 // World of game
 import (
+	"math"
+
 	c "../common"
 )
 
@@ -10,6 +12,13 @@ const (
 	PlayerVel = 11
 )
 
+// Game inits the world
+func Game() World {
+
+	return World{}
+}
+
+// World of the game
 type World struct {
 	Players []Player
 	Shots   []Shot
@@ -17,6 +26,7 @@ type World struct {
 	Pchan   chan c.PlayerMessg
 }
 
+// Run World loop
 func (w World) Run(cp c.PlayerMessg, cs c.ShotMessg) {
 	players := make([]Player, 0)
 	shots := make([]Shot, 0)
@@ -42,9 +52,9 @@ func (w World) EventHandler() {
 
 // PlayerHandler for World
 func (w World) PlayerHandler(p c.PlayerMessg) {
-	switch p.chanCode {
+	switch p.ChanCode {
 	case c.CCode.Create:
-		w.CreatePlayer()
+		w.CreatePlayer(p)
 	case c.CCode.Update:
 
 	case c.CCode.Delete:
@@ -54,16 +64,25 @@ func (w World) PlayerHandler(p c.PlayerMessg) {
 
 // ShotHandler for World
 func (w World) ShotHandler(s c.ShotMessg) {
+	switch s.ChanCode {
+	case c.CCode.Create:
+		w.CreateShot(s)
+	case c.CCode.Update:
 
+	case c.CCode.Delete:
+
+	}
 }
 
 // CreateShot in the world
-func (w World) CreateShot(s Shot) {
+func (w World) CreateShot(sm c.ShotMessg) {
+	s := Shot{}
 	w.Shots = append(w.Shots, s)
 }
 
 // CreatePlayer in the world
-func (w World) CreatePlayer(p Player) {
+func (w World) CreatePlayer(pm c.PlayerMessg) {
+	p := Player{}
 	w.Players = append(w.Players, p)
 }
 
@@ -94,8 +113,10 @@ type Shot struct {
 func (s Shot) Update(pos Vec) {
 	s.Pos = pos
 }
-func (s Shot) UpdateVel() {
-
+func (s Shot) UpdateVel(d Vec) {
+	d.Normalize()
+	d.Mult(ShotVel)
+	s.Pos.Add(d)
 }
 
 func (ss Shots) Update() {
@@ -104,20 +125,39 @@ func (ss Shots) Update() {
 	}
 }
 
-// Game inits the world
-func Game() World {
-
-	return World{}
-}
-
 // Vec 2D Vector
 type Vec struct {
 	x float32
 	y float32
 }
 
+func CreateVector() Vec {
+	return Vec{x: 0, y: 0}
+}
+func InitVector(x, y float32) Vec {
+	return Vec{x: x, y: y}
+}
+
 // Add to vector
 func (v Vec) Add(av Vec) {
 	v.x = v.x + av.x
 	v.y = v.y + av.y
+}
+
+func (v Vec) MagSq() float32 { return v.x*v.x + v.y*v.y }
+
+func (v Vec) Mag() float32 {
+	return float32(math.Sqrt(float64(v.MagSq())))
+}
+
+func (v Vec) Mult(n float32) {
+	v.x *= n
+	v.y *= n
+}
+
+func (v Vec) Normalize() {
+	l := v.Mag()
+	if l != 0 {
+		v.Mult(1 / l)
+	}
 }

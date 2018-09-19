@@ -19,8 +19,18 @@ type Codes struct {
 
 // Vec is a 2D Vector
 type PlayerMessg struct {
-	chanCode Code
+	ChanCode Code
+	Pos      Vec
+	ID       string
 }
 type ShotMessg struct {
-	chanCode Code
+	ChanCode Code
+	Pos      Vec
+	Dir      Vec
+	ID       string
+}
+
+type Vec struct {
+	x float32
+	y float32
 }

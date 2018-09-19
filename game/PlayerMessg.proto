@@ -1,0 +1,12 @@
+syntax = "proto3";
+package main;
+message PlayerMessg {
+    string ChanCode = 1;
+    string ID = 2;
+    message Vec {
+        float x = 1;
+        float y = 2;
+    }
+    Vec Pos = 3;
+    int32 Life = 4;
+}
