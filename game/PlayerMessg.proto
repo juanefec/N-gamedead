@@ -1,5 +1,5 @@
 syntax = "proto3";
-package main;
+package protoparse;
 message Vec {
     float x = 1;
     float y = 2;
@@ -16,8 +16,8 @@ message ShotAction {
 }
 
 message UpdateView {
-    []Vec Enemys = 1;
-    []Vec Shots = 2;
+    repeated Vec Enemys = 1;
+    repeated Vec Shots = 2;
     int32 Life = 3;
     Vec Pos = 4;
 }
