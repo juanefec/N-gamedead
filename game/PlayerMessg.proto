@@ -1,12 +1,23 @@
 syntax = "proto3";
 package main;
-message PlayerMessg {
+message Vec {
+    float x = 1;
+    float y = 2;
+}
+
+message PlayerAction {
     string ChanCode = 1;
     string ID = 2;
-    message Vec {
-        float x = 1;
-        float y = 2;
-    }
-    Vec Pos = 3;
-    int32 Life = 4;
+}
+
+message ShotAction {
+    Vec Pos = 1;
+    Vec Dir = 2;
+}
+
+message UpdateView {
+    []Vec Enemys = 1;
+    []Vec Shots = 2;
+    int32 Life = 3;
+    Vec Pos = 4;
 }

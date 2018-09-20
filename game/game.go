@@ -20,6 +20,7 @@ func Game() World {
 
 // World of the game
 type World struct {
+	x ,y float32
 	Players []Player
 	Shots   []Shot
 	Schan   chan c.ShotMessg
