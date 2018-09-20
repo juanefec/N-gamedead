@@ -28,7 +28,7 @@ type World struct {
 }
 
 // Run World loop
-func (w World) Run(cp c.PlayerMessg, cs c.ShotMessg) {
+func (w World) Run() {
 	players := make([]Player, 0)
 	shots := make([]Shot, 0)
 	w.Pchan = make(chan c.PlayerMessg)
