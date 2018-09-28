@@ -1,19 +1,19 @@
+//falta pasar referencia de slice de conexiones y eliminar conexion al desconectar
 package main
 
 import (
 	"log"
 	"net/http"
-	"time"
 
 	"./model"
 
 	"github.com/gorilla/websocket"
 )
 
-func main() {
-	http.HandleFunc("/ws", handler)
-	http.ListenAndServe(":9999", nil)
-}
+var gameWorld = new(GameWorld)
+var connections = make([]*websocket.Conn, 0)
+
+var done = make(chan bool)
 
 var upgrader = websocket.Upgrader{
 	ReadBufferSize:    4096,
@@ -24,9 +24,11 @@ var upgrader = websocket.Upgrader{
 	},
 }
 
-var act = model.Actions{}
-var pos = model.Position{}
-var done = make(chan bool)
+func main() {
+	go gameWorld.Run(connections)
+	http.HandleFunc("/ws", handler)
+	http.ListenAndServe(":9999", nil)
+}
 
 func handler(res http.ResponseWriter, req *http.Request) {
 	conn, err := upgrader.Upgrade(res, req, nil)
@@ -38,8 +40,11 @@ func handler(res http.ResponseWriter, req *http.Request) {
 
 	log.Println("WebSocket connection initiated.")
 
-	go actionHandler(conn)
-	go positionHandler(conn)
+	player := model.NewPlayer("jugador")
+	gameWorld.AddPlayer(player)
+	connections = append(connections, conn)
+
+	go actionHandler(conn, player)
 
 	for i := 0; i < 2; i++ {
 		<-done
@@ -48,7 +53,7 @@ func handler(res http.ResponseWriter, req *http.Request) {
 	log.Println("WebSocket connection terminated.")
 }
 
-func actionHandler(conn *websocket.Conn) {
+func actionHandler(conn *websocket.Conn, player *model.Player) {
 	for {
 		_, bytes, err := conn.ReadMessage()
 		if err != nil {
@@ -56,49 +61,8 @@ func actionHandler(conn *websocket.Conn) {
 			break
 		}
 
-		switch msg := string(bytes[:]); msg {
-		case "upPressed":
-			act.Up = true
-		case "upUnpressed":
-			act.Up = false
-		case "downPressed":
-			act.Down = true
-		case "downUnpressed":
-			act.Down = false
-		case "leftPressed":
-			act.Left = true
-		case "leftUnpressed":
-			act.Left = false
-		case "rightPressed":
-			act.Right = true
-		case "rightUnpressed":
-			act.Right = false
-		}
+		msg := string(bytes[:])
+
+		player.SetAction(msg)
 	}
-	done <- true
-}
-
-func positionHandler(conn *websocket.Conn) {
-	for {
-		if act.Up {
-			pos.Y++
-		} else if act.Down {
-			pos.Y--
-		}
-
-		if act.Right {
-			pos.X++
-		} else if act.Left {
-			pos.X--
-		}
-
-		err := conn.WriteJSON(pos)
-		if err != nil {
-			log.Println("Write Error: ", err)
-			break
-		}
-
-		time.Sleep(50 * time.Millisecond)
-	}
-	done <- true
 }
