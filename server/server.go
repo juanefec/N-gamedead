@@ -5,20 +5,10 @@ import (
 	"net/http"
 	"time"
 
+	"./model"
+
 	"github.com/gorilla/websocket"
 )
-
-type position struct {
-	X int
-	Y int
-}
-
-type actions struct {
-	Up    bool
-	Down  bool
-	Left  bool
-	Right bool
-}
 
 func main() {
 	http.HandleFunc("/ws", handler)
@@ -34,8 +24,8 @@ var upgrader = websocket.Upgrader{
 	},
 }
 
-var act = actions{}
-var pos = position{}
+var act = model.Actions{}
+var pos = model.Position{}
 var done = make(chan bool)
 
 func handler(res http.ResponseWriter, req *http.Request) {
