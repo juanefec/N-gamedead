@@ -44,10 +44,7 @@ func handler(res http.ResponseWriter, req *http.Request) {
 	connections = append(connections, conn)
 
 	go actionHandler(conn, player)
-
-	for i := 0; i < 2; i++ {
-		<-done
-	}
+	<-done
 
 	log.Println("WebSocket connection terminated.")
 }
@@ -57,6 +54,7 @@ func actionHandler(conn *websocket.Conn, player *model.Player) {
 		_, bytes, err := conn.ReadMessage()
 		if err != nil {
 			log.Println("Read Error: ", err)
+			done <- true
 			break
 		}
 

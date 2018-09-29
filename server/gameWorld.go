@@ -26,8 +26,9 @@ func (g *GameWorld) Run(connections *[]*websocket.Conn) {
 			err := conn.WriteJSON(g.Players)
 			if err != nil {
 				log.Println("Write Error: ", err)
-				*connections = append((*connections)[:i], (*connections)[i+1:]...)
 				g.Players = append(g.Players[:i], g.Players[i+1:]...)
+				*connections = append((*connections)[:i], (*connections)[i+1:]...)
+				conn.Close()
 				break
 			}
 		}
