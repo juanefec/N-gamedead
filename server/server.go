@@ -1,4 +1,3 @@
-//falta pasar referencia de slice de conexiones y eliminar conexion al desconectar
 package main
 
 import (
