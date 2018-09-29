@@ -1,0 +1,67 @@
+<html>
+<head>
+    <title>WebSocket demo</title>
+</head>
+<body>
+    <div id="container"></div>
+
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            var ws;
+            if (window.WebSocket === undefined) {
+                $("#container").append("Your browser does not support WebSockets");
+                return;
+            } else {
+                ws = initWS();
+            }
+            function initWS() {
+                var socket = new WebSocket("ws://localhost:9999/ws"),
+                    container = $("#container")
+                socket.onmessage = function (e) {
+                    container.text(e.data);
+                }
+                return socket;
+            }
+
+            $(document).keydown(function(e){
+                switch (e.key) {
+                    case "ArrowUp":           
+                        ws.send("1");                    
+                        break;     
+                    case "ArrowDown":
+                        ws.send("2");                        
+                        break;
+                    case "ArrowLeft":                        
+                        ws.send("3");
+                        break;
+                    case "ArrowRight":
+                        ws.send("4");                     
+                        break;                
+                    default:
+                        break;
+                }
+            });
+
+            $(document).keyup(function(e){
+                switch (e.key) {
+                    case "ArrowUp":                    
+                        ws.send("5");                    
+                        break;     
+                    case "ArrowDown":
+                        ws.send("6");                        
+                        break;
+                    case "ArrowLeft":                        
+                        ws.send("7");
+                        break;
+                    case "ArrowRight":
+                        ws.send("8");                     
+                        break;                
+                    default:
+                        break;
+                }
+            });
+        });
+    </script>
+</body>
+</html>

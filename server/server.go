@@ -25,7 +25,7 @@ var upgrader = websocket.Upgrader{
 }
 
 func main() {
-	go gameWorld.Run(connections)
+	go gameWorld.Run(&connections)
 	http.HandleFunc("/ws", handler)
 	http.ListenAndServe(":9999", nil)
 }
