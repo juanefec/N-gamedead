@@ -9,8 +9,7 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-var gameWorld = new(GameWorld)
-var connections = make([]*websocket.Conn, 0)
+var gameWorld = NewGameWorld()
 
 var done = make(chan bool)
 
@@ -24,7 +23,7 @@ var upgrader = websocket.Upgrader{
 }
 
 func main() {
-	go gameWorld.Run(&connections)
+	go gameWorld.Run()
 	http.HandleFunc("/ws", handler)
 	http.ListenAndServe(":9999", nil)
 }
@@ -40,8 +39,7 @@ func handler(res http.ResponseWriter, req *http.Request) {
 	log.Println("WebSocket connection initiated.")
 
 	player := model.NewPlayer("jugador")
-	gameWorld.AddPlayer(player)
-	connections = append(connections, conn)
+	gameWorld.AddPlayer(player, conn)
 
 	go actionHandler(conn, player)
 	<-done

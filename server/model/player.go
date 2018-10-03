@@ -2,6 +2,7 @@ package model
 
 import (
 	"../constants"
+	"../data"
 )
 
 type Player struct {
@@ -51,4 +52,12 @@ func (p *Player) Move() {
 	} else if p.Actions.Left {
 		p.Position.X--
 	}
+}
+
+func (p *Player) GetData() *data.PlayerData {
+	data := new(data.PlayerData)
+	data.Name = p.Name
+	data.X = p.Position.X
+	data.Y = p.Position.Y
+	return data
 }
