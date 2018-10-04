@@ -43,10 +43,9 @@ func (g *GameWorld) sendPackets() {
 	for k, v := range g.Players {
 		err := v.WriteJSON(packet)
 		if err != nil {
-			log.Println("Write Error: ", err)
+			log.Println("Write Error: ", k.Name, " ", err)
 			v.Close()
 			delete(g.Players, k)
-			break
 		}
 	}
 }

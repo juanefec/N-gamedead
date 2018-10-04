@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
@@ -12,6 +13,8 @@ import (
 var gameWorld = NewGameWorld()
 
 var done = make(chan bool)
+
+var playerNumber = 0
 
 var upgrader = websocket.Upgrader{
 	ReadBufferSize:    4096,
@@ -36,9 +39,10 @@ func handler(res http.ResponseWriter, req *http.Request) {
 	}
 	defer conn.Close()
 
-	log.Println("WebSocket connection initiated.")
+	log.Println("WebSocket connection initiated. Port ", conn.RemoteAddr())
 
-	player := model.NewPlayer("jugador")
+	player := model.NewPlayer(fmt.Sprintf("%s%d", "jugador", playerNumber))
+	playerNumber++ //esto va a volar despues, ahora está para probar
 	gameWorld.AddPlayer(player, conn)
 
 	go actionHandler(conn, player)
@@ -51,8 +55,7 @@ func actionHandler(conn *websocket.Conn, player *model.Player) {
 	for {
 		_, bytes, err := conn.ReadMessage()
 		if err != nil {
-			log.Println("Read Error: ", err)
-			done <- true
+			log.Println("Read Error: ", player.Name, " ", err)
 			break
 		}
 
