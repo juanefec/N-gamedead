@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"sync"
 
 	"./model"
 
@@ -11,8 +12,6 @@ import (
 )
 
 var gameWorld = NewGameWorld()
-
-var done = make(chan bool)
 
 var playerNumber = 0
 
@@ -28,6 +27,7 @@ var upgrader = websocket.Upgrader{
 func main() {
 	go gameWorld.Run()
 	http.HandleFunc("/ws", handler)
+	log.Println("Running")
 	http.ListenAndServe(":9999", nil)
 }
 
@@ -45,13 +45,15 @@ func handler(res http.ResponseWriter, req *http.Request) {
 	playerNumber++ //esto va a volar despues, ahora está para probar
 	gameWorld.AddPlayer(player, conn)
 
-	go actionHandler(conn, player)
-	<-done
+	var wg sync.WaitGroup
+	wg.Add(1)
+	go actionHandler(conn, player, &wg)
+	wg.Wait()
 
 	log.Println("WebSocket connection terminated.")
 }
 
-func actionHandler(conn *websocket.Conn, player *model.Player) {
+func actionHandler(conn *websocket.Conn, player *model.Player, wg *sync.WaitGroup) {
 	for {
 		_, bytes, err := conn.ReadMessage()
 		if err != nil {
@@ -63,4 +65,5 @@ func actionHandler(conn *websocket.Conn, player *model.Player) {
 
 		player.SetAction(msg)
 	}
+	wg.Done()
 }
